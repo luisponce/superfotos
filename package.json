@@ -1,8 +1,11 @@
 {
-  "name": "file_upload",
+  "name": "superfotos",
   "version": "0.0.1",
   "dependencies": {
     "express": "4.13.3",
+    "body-parser": "^1.7.0",
+    "ejs": "^1.0.0",
+    "express-session": "^1.7.6",
     "multer": "1.1.0"
   },
   "devDependencies": {
