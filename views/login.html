@@ -11,7 +11,7 @@ $(document).ready(function(){
         /*
         * Perform some validation here.
         */
-        $.post("http://localhost:3005/login",{email:email,pass:pass},function(data){        
+        $.post("http://10.131.137.212:3005/login",{email:email,pass:pass},function(data){        
             if(data==='done')           
             {
                 window.location.href="/home";

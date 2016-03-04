@@ -52,7 +52,7 @@ app.post('/login', function(req,res){
 	email = req.body.email;
 	encrypter.cryptPassword(req.body.pass, function(err,hash){
 		pass = hash;
-		
+
 		sess.email=req.body.email;
 		res.end('done');
 	});
@@ -66,7 +66,6 @@ app.post('/api/photo',function(req,res){
 
 		res.write('<h1>File is uploaded</h1>');
 		res.end('<a href="/uploads/'+req.body.name+'">view img</a>');
-		
 	});
 });
 
