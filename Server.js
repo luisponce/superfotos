@@ -56,7 +56,10 @@ app.post('/api/photo',function(req,res){
 		if(err) {
 			return res.end(""+err);
 		}
-		res.end("File is uploaded");
+
+		res.write('<h1>File is uploaded</h1>');
+		res.end('<a href="/uploads/'+req.body.name+'">view img</a>');
+		
 	});
 });
 
