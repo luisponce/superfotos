@@ -1,9 +1,10 @@
-var express =   require("express");
-var multer  =   require('multer');
-var bodyParser = require('body-parser');
-var session = require('express-session');
-var app         =   express();
-var storage =   multer.diskStorage({
+var express 	= 	require("express");
+var multer  	=  require('multer');
+var bodyParser = 	require('body-parser');
+var session 	= 	require('express-session');
+var encrypter 	=  require('./helpers/passEncription');
+var app 			= 	express();
+var storage 	=  multer.diskStorage({
 	destination: function (req, file, callback) {
 		callback(null, './uploads');
 	},
@@ -46,9 +47,15 @@ app.get('/home', function(req, res){
 
 app.post('/login', function(req,res){
 	sess=req.session;
+	var email, pass;
 
-	sess.email=req.body.email;
-	res.end('done');
+	email = req.body.email;
+	encrypter.cryptPassword(req.body.pass, function(err,hash){
+		pass = hash;
+		
+		sess.email=req.body.email;
+		res.end('done');
+	});
 });
 
 app.post('/api/photo',function(req,res){
