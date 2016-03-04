@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>SuperFotos.co</title>
+
+	<link rel="stylesheet" type="text/css" href="styles.css">
+
+	<style>
+
+		textarea:focus, input:focus{
+			outline: 0;
+		}
+
+		input:focus:invalid,
+		textarea:focus:invalid{
+			border:1px solid #F5192F;
+			box-shadow:0 0 4px #F5192F;
+		}
+
+		input:focus:valid,
+		textarea:focus:valid{
+			border: 1px solid #64C364;
+			box-shadow: 0 0 4px #64C364;
+		}
+
+	</style>
+	
+</head>
+
+<body>
+
+	<form id="uploadForm" enctype="multipart/form-data" action="/api/photo" method="post">
+
+		<div class="form-title-row">
+			<h1>Upload a new photo</h1>
+		</div>
+
+		<div class="form-row">
+			<label>
+				<span>Name</span>
+				<input type="text" name="name" required maxlength="24">
+			</label>
+		</div>
+
+		<div class="form-row">
+			<label>
+				<span>File</span>
+				<input type="file" name="userPhoto" accept=".jpg,.jpeg,.png" required>
+			</label>
+		</div>
+
+		<div class="form-row">
+			<button type="submit" name="submit">Upload image</button>
+		</div>
+
+	</form>
+
+</body>
+
+</html>
