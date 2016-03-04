@@ -6,10 +6,12 @@ var storage =   multer.diskStorage({
 		callback(null, './uploads');
 	},
 	filename: function (req, file, callback) {
-		callback(null, file.fieldname + '-' + Date.now());
+		callback(null, req.body.name);
 	}
 });
 var upload = multer({ storage : storage}).single('userPhoto');
+
+app.use(express.static(__dirname+'/'));
 
 app.get('/',function(req,res){
 	res.sendFile(__dirname + "/index.html");
