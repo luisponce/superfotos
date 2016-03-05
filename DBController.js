@@ -7,3 +7,16 @@ exports.connect = function(callback){
     db.once('open', callback);
 }
 
+//user schema
+var userSchema = new mongoose.schema({
+	name: String,
+	username: String,
+	password: String
+
+});
+
+exports.User = mongoose.model('User', userSchema);
+
+User.statics.findByUsername = function(usrname, cb){
+	return this.find({username: usrname}, cb);
+}

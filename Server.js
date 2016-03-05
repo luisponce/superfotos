@@ -25,27 +25,20 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 var sess;
 
-
+DBController.connect(null);
 
 app.get('/',function(req,res){
 	sess = req.session;
-	if(sess.email){
+	if(sess.usr){
 		res.redirect('/home');
 	} else {
 		res.render('login.html');
 	}
 });
 
-app.get('/db', function(req,res){
-	res.write('loading...');
-	DBController.connect(function(){
-		res.end('done');
-	});
-});
-
 app.get('/home', function(req, res){
 	sess = req.session;
-	if(sess.email){
+	if(sess.usr){
 		res.render('index.html');
 	} else {
 		res.write('<h1>Please login first.</h1>');
@@ -53,15 +46,37 @@ app.get('/home', function(req, res){
 	}
 });
 
+
+app.post('/register', function(req,res){
+	sess = req.session;
+	if(sess.usr){
+		//TODO user already loged in
+	} 
+
+	var usr = new DBController.User({
+		name: req.body.name,
+		username: req.body.username,
+		password: req.body.password
+	});
+
+	usr.save(function(err, usr){
+		if(err) {
+			console.log(err);
+			res.end(err);
+		} else {
+			sess.usr = usr.name;
+		}
+	});
+});
+
 app.post('/login', function(req,res){
 	sess=req.session;
-	var email, pass;
-
-	email = req.body.email;
+	
 	encrypter.cryptPassword(req.body.pass, function(err,hash){
 		pass = hash;
 
-		sess.email=req.body.email;
+		sess.usr = usrname;
+		
 		res.end('done');
 	});
 });
