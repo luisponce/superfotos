@@ -75,7 +75,7 @@ app.post('/login', function(req,res){
 	encrypter.cryptPassword(req.body.pass, function(err,hash){
 		pass = hash;
 
-		sess.usr = usrname;
+		sess.usr = req.body.usrname;
 		
 		res.end('done');
 	});
