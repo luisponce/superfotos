@@ -2,6 +2,7 @@ var express 	= 	require("express");
 var multer  	=  require('multer');
 var bodyParser = 	require('body-parser');
 var session 	= 	require('express-session');
+var DBController = requiere('./DBController');
 var encrypter 	=  require('./helpers/passEncription');
 var app 			= 	express();
 var storage 	=  multer.diskStorage({

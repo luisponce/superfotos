@@ -1,4 +1,9 @@
-var mongoose = require('mongoose');
+export.mongoose = require('mongoose');
 
-//mongoose.connect('mongodb://localhost/test');
+export.connect = function(req,res, callback){
+    mongoose.connect('mongodb://10.131.137.121/superfotos');
+    var db = mongoose.connection;
+    db.on('error', console.error.bind(console, 'connection error:'));
+    db.once('open', callback(req,res));
+}
 
