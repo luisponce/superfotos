@@ -2,7 +2,7 @@ var express 	= 	require("express");
 var multer  	=  require('multer');
 var bodyParser = 	require('body-parser');
 var session 	= 	require('express-session');
-var DBController = requiere('./DBController');
+var DBController = require('./DBController');
 var encrypter 	=  require('./helpers/passEncription');
 var app 			= 	express();
 var storage 	=  multer.diskStorage({
@@ -34,6 +34,13 @@ app.get('/',function(req,res){
 	} else {
 		res.render('login.html');
 	}
+});
+
+app.get('/db', function(req,res){
+	res.write('loading...');
+	DBController.connect(function(){
+		res.end('done');
+	});
 });
 
 app.get('/home', function(req, res){
