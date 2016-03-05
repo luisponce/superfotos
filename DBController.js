@@ -8,15 +8,16 @@ exports.connect = function(callback){
 }
 
 //user schema
-var userSchema = new mongoose.schema({
+var userSchema = new mongoose.Schema({
 	name: String,
 	username: String,
 	password: String
 
 });
 
-exports.User = mongoose.model('User', userSchema);
+exports.User = User;
+var User = mongoose.model('User', userSchema);
 
-User.statics.findByUsername = function(usrname, cb){
-	return this.find({username: usrname}, cb);
-}
+// User.statics.findByUsername = function(usrname, cb){
+// 	return this.find({username: usrname}, cb);
+// }
