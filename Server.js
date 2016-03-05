@@ -74,12 +74,15 @@ app.post('/login', function(req,res){
 	
 	sess.usr = req.body.username;
 
-	encrypter.cryptPassword(req.body.pass, function(err,hash){
-		pass = hash;
+    res.end('done');
+
+	//encrypter.cryptPassword(req.body.pass, function(err,hash){
+	// 	pass = hash;
 
 		
-		res.end('done');
-	});
+	// 	res.end('done');
+	// })
+    ;
 });
 
 app.post('/api/photo',function(req,res){
