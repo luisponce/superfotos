@@ -72,7 +72,7 @@ app.post('/register', function(req,res){
 app.post('/login', function(req,res){
 	sess=req.session;
 	
-	sess.usr = req.body.usrname;
+	sess.usr = req.body.username;
 
 	encrypter.cryptPassword(req.body.pass, function(err,hash){
 		pass = hash;
