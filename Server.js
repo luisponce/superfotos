@@ -78,7 +78,6 @@ app.post('/login', function(req,res){
 		pass = hash;
 
 		
-		
 		res.end('done');
 	});
 });
