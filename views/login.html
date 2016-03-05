@@ -1,29 +1,128 @@
-<html>
-<head>
-<title>Session Management in NodeJS using Express4.2</title>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> 
-<script>
-$(document).ready(function(){
-    var email,pass;
-    $("#submit").click(function(){
-        email=$("#email").val();
-        pass=$("#password").val();
-        /*
-        * Perform some validation here.
-        */
-        $.post("http://10.131.137.212:3005/login",{email:email,pass:pass},function(data){        
-            if(data==='done')           
-            {
-                window.location.href="/home";
-            }
-        });
-    });
-});
-</script>
-</head>
-<body>
-<input type="text" size="40" placeholder="Type your email" id="email"><br />
-<input type="password" size="40" placeholder="Type your password" id="password"><br />
-<input type="button" value="Submit" id="submit">
-</body>
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6 lt8"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7 lt8"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8 lt8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="UTF-8" />
+        <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  -->
+        <title>Login and Sign Up</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <link rel="shortcut icon" href="../favicon.ico"> 
+        <link rel="stylesheet" type="text/css" href="css/demo.css" />
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/animate-custom.css" />
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script>
+		$(document).ready(function(){
+			var email,pass;
+			$("#loginButton").click(function(){
+				email=$("#username").val();
+				pass=$("#password").val();
+				/*
+				* Perform some validation here.
+				*/
+				$.post("http://10.131.137.212:3005/login",{email:email,pass:pass},function(data){        
+					if(data==='done')           
+					{
+						window.location.href="/home";
+					}
+				});
+			});
+		});
+		
+		/*$(document).ready(function(){
+			var pass,repass;
+			$("#signUpButton").click(function(){
+				
+				* Register and Login here.
+				
+			});
+		});*/
+	</script>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1>Login and Sign Up<span> SuperFotos.co</span></h1>
+			</header>
+            <section>				
+                <div id="container_demo" >
+                    <a class="hiddenanchor" id="toregister"></a>
+                    <a class="hiddenanchor" id="tologin"></a>
+                    <div id="wrapper">
+                        <div id="login" class="animate form">
+                            <form method="post"> 
+                                <h1>Log in</h1> 
+                                <p> 
+                                    <label for="username" class="uname" data-icon="u" > Username </label>
+                                    <input id="username" name="username" required="required" type="text" placeholder="mysuperusername"/>
+                                </p>
+                                <p> 
+                                    <label for="password" class="youpasswd" data-icon="p"> Password </label>
+                                    <input id="password" name="password" required="required" type="password" placeholder="mysuperpassword" /> 
+                                </p>
+              
+                                <p class="login button"> 
+                                    <input type="submit" value="Login" id="loginButton" /> 
+								</p>
+                                <p class="change_link">
+									Not a member yet ?
+									<a href="#toregister" class="to_register">Join us</a>
+								</p>
+                            </form>
+                        </div>
+
+                        <div id="register" class="animate form">
+                            <form method="post"> 
+                                <h1> Sign up </h1> 
+                                <p> 
+                                    <label for="namesignup" class="name" data-icon="u">Name</label>
+                                    <input id="namesignup" name="namesignup" required="required" type="text" placeholder="mysupername" />
+                                </p>
+								<p> 
+                                    <label for="usernamesignup" class="uname" data-icon="u">Username</label>
+                                    <input id="usernamesignup" name="usernamesignup" required="required" type="text" placeholder="mysuperusername" />
+                                </p>
+                                <p> 
+                                    <label for="emailsignup" class="youmail" data-icon="e" >Email</label>
+                                    <input id="emailsignup" name="emailsignup" required="required" type="email" placeholder="mysupermail@mail.com"/> 
+                                </p>
+                                <p> 
+                                    <label for="passwordsignup" class="youpasswd" data-icon="p">Password </label>
+                                    <input id="passwordsignup" name="passwordsignup" required="required" type="password" placeholder="mysuperpassword"/>
+                                </p>
+                                <p> 
+                                    <label for="passwordsignup_confirm" class="youpasswd" data-icon="p">Please confirm your password </label>
+                                    <input id="passwordsignup_confirm" name="passwordsignup_confirm" required="required" type="password" placeholder="mysuperpassword"/>
+                                </p>
+                                <p class="signin button"> 
+									<input type="submit" value="Sign up" id="signUpButton"/> 
+								</p>
+                                <p class="change_link">  
+									Already a member ?
+									<a href="#tologin" class="to_register"> Go and log in </a>
+								</p>
+                            </form>
+							<script>
+								var pass = document.getElementById("passwordsignup"), repass = document.getElementById("passwordsignup_confirm");
+		
+								function validatePassword(){
+									if(pass.value != repass.value) {
+										repass.setCustomValidity("Passwords Don't Match");
+									} else {
+										repass.setCustomValidity('');
+									}
+								}
+								passwordsignup.onchange = validatePassword;
+								passwordsignup_confirm.onkeyup = validatePassword;
+							</script>
+                        </div>
+						
+                    </div>
+                </div>  
+            </section>
+        </div>
+    </body>
 </html>
