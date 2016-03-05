@@ -30,15 +30,30 @@
 					}
 				});
 			});
+            $("#signUpButton").click(function(){
+                name=$("#namesignup").val();
+                username=$("#usernamesignup").val();
+                pass=$("#passwordsignup").val();
+                /*
+                * Perform some validation here.
+                */
+                $.post("http://10.131.137.212:3005/register",
+                    {
+                        name:name,
+                        username:username,
+                        pass:pass
+                    },function(data){
+                    if(data==='done')
+                    {
+                        window.location.href="/home";
+                    }
+                });
+            });
 		});
 
 		/*$(document).ready(function(){
 			var pass,repass;
-			$("#signUpButton").click(function(){
-
-				* Register and Login here.
-
-			});
+			
 		});*/
 	</script>
     </head>
