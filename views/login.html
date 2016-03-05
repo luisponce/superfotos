@@ -16,14 +16,14 @@
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<script>
 		$(document).ready(function(){
-			var email,pass;
+			var username,pass;
 			$("#loginButton").click(function(){
-				email=$("#username").val();
+				username=$("#username").val();
 				pass=$("#password").val();
 				/*
 				* Perform some validation here.
 				*/
-				$.post("http://10.131.137.212:3005/login",{usrname:email,pass:pass},function(data){
+				$.post("http://10.131.137.212:3005/login",{username:username,pass:pass},function(data){
 					if(data==='done')
 					{
 						window.location.href="/home";
