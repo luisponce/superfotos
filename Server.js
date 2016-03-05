@@ -25,8 +25,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 var sess;
 
-DBController.connect(null);
-
 app.get('/',function(req,res){
 	sess = req.session;
 	if(sess.usr){
@@ -59,13 +57,15 @@ app.post('/register', function(req,res){
 		password: req.body.password
 	});
 
-	usr.save(function(err, usr){
-		if(err) {
-			console.log(err);
-			res.end(err);
-		} else {
-			sess.usr = usr.name;
-		}
+	DBController.connect(function(req,res){
+		usr.save(function(err, usr){
+			if(err) {
+				console.log(err);
+				res.end(err);
+			} else {
+				sess.usr = usr.name;
+			}
+		});
 	});
 });
 
