@@ -101,8 +101,10 @@ app.post('/login', function(req,res){
 });
 
 app.post('/post', upload, function(req,res, next){
+	var body = req.body;
+
 	sess=req.session;
-	if(sess.usr){
+	if(sess.usr == null){
 		res.end('Access Denied');
 	} else {
 		DBController.User
@@ -118,43 +120,51 @@ app.post('/post', upload, function(req,res, next){
 					// req.file is the file
 	  				// req.body will hold the text fields, if there were any
 	  				var tagarr = new Array();
-	  				tagarr = req.body.tags.split(',');
+	  				
+	  				tagarr = body.taglist.split(',');
 
 	  				var post = {
 	  					owner: user._id,
-	  					title: req.body.postname,
+	  					title: body.postname,
 	  					image: {
-	  						name: req.body.imagename,
+	  						name: body.imagename,
 	  						filename: req.file.filename,
 	  						uri: user.username+"/"+req.file.originalname
 	  					},
-	  					description: req.body.description
+	  					description: body.description
 	  				}
 
 	  				var postInstance = new DBController.Post(post);
 
-	  				for (var i = tagarr.length - 1; i >= 0; i--) {
-	  					var tagInstance = new DBController.Tag({name: tagarr[i]});
-	  					postInstance.tags.push(tagInstance);
-	  				};
-	  				
-	  				
-	  				postInstance.save(function(err, postInstance){
-	  					if(err){
-	  						//TODO error handling
-	  					} else {
-	  						//TODO redirect to created post
-	  						res.end('created');
-	  					}
+	  				crearTags(tagarr, postInstance, function(postInstance){
+	  					postInstance.save(function(err, postInstance){
+		  					if(err){
+		  						//TODO error handling
+		  					} else {
+		  						//TODO redirect to created post
+		  						res.end('created');
+		  					}
+		  				});
 	  				});
 				}
-
-				res.write('<h1>File is uploaded</h1>');
-				res.end('<a href="/uploads/'+req.body.name+'">view img</a>');
 			});
 		});
 	}
 });
+
+function crearTags(tagarr, postInstance, cb){
+	for (var i = tagarr.length - 1; i >= 0; i--) {
+		var tagInstance = new DBController.Tag({name: tagarr[i]});
+		// tagInstance.save(function(err, tag){
+		// 	if (err) {
+		// 		//TODO error handling
+		// 	}
+		// });
+		postInstance.tags.push(tagInstance);
+	};
+
+	return cb(postInstance);
+}
 
 app.get('/uploads/:name', function(req, res){
 	var filename = req.params.name;
