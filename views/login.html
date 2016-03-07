@@ -23,7 +23,10 @@
 				/*
 				* Perform some validation here.
 				*/
-				$.post("http://localhost:3005/login",{username:username,pass:pass},function(data){
+				$.post("http://localhost:3005/login",{
+                    'username':username,
+                    'password':pass
+                },function(data){
 					if(data==='done')
 					{
 						window.location.href="/home";
@@ -39,9 +42,9 @@
                 */
                 $.post("http://localhost:3005/register",
                     {
-                        name:name,
-                        username:username,
-                        pass:pass
+                        'name':name,
+                        'username':username,
+                        'password':pass
                     },function(data){
                     if(data==='done')
                     {
