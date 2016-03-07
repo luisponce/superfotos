@@ -26,6 +26,11 @@ exports.User = UserModel;
 
 //Post schema
 var postSchema = new Schema({
+	owner: {
+		type: Schema.Types.ObjectId, 
+		required: true,
+		ref: 'User'
+	},
 	title: {
 		type: String,
 		required: true
@@ -44,8 +49,8 @@ var postSchema = new Schema({
 			required: true
 		}
 	},
-	Description: String,
-	Tags: [{type: Schema.Types.ObjectId, ref: 'Tag'}]
+	description: String,
+	tags: [{type: Schema.Types.ObjectId, ref: 'Tag'}]
 });
 var PostModel = connection.model('Post', postSchema);
 exports.Post = PostModel;

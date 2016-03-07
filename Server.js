@@ -52,6 +52,9 @@ app.post('/register', function(req,res){
 	} 
 	
 	encrypter.cryptPassword(req.body.password, function(err, hash){
+		if(err){
+			//TODO error handling
+		}
 		var user = {
 			name: req.body.name,
 			username: req.body.username,
@@ -97,22 +100,58 @@ app.post('/login', function(req,res){
 		});
 });
 
-app.post('/api/photo', upload, function(req,res, next){
+app.post('/post', upload, function(req,res, next){
 	sess=req.session;
 	if(sess.usr){
 		res.end('Access Denied');
 	} else {
-		upload(req,res, function(err) {
+		DBController.User
+		.findOne({'username': 'lp'}, function(err, user){//TODO: !!!!!! cambiar a usuario en session
 			if(err) {
-				return res.end(err);
-			} else {
-				// req.file is the file
-  				// req.body will hold the text fields, if there were any
-  				
+				//TODO error handling
 			}
 
-			res.write('<h1>File is uploaded</h1>');
-			res.end('<a href="/uploads/'+req.body.name+'">view img</a>');
+			upload(req,res, function(err) {
+				if(err) {
+					return res.end(err);
+				} else {
+					// req.file is the file
+	  				// req.body will hold the text fields, if there were any
+	  				var tagarr = new Array();
+	  				tagarr = req.body.tags.split(',');
+
+	  				var post = {
+	  					owner: user._id,
+	  					title: req.body.postname,
+	  					image: {
+	  						name: req.body.imagename,
+	  						filename: req.file.filename,
+	  						uri: user.username+"/"+req.file.originalname
+	  					},
+	  					description: req.body.description
+	  				}
+
+	  				var postInstance = new DBController.Post(post);
+
+	  				for (var i = tagarr.length - 1; i >= 0; i--) {
+	  					var tagInstance = new DBController.Tag({name: tagarr[i]});
+	  					postInstance.tags.push(tagInstance);
+	  				};
+	  				
+	  				
+	  				postInstance.save(function(err, postInstance){
+	  					if(err){
+	  						//TODO error handling
+	  					} else {
+	  						//TODO redirect to created post
+	  						res.end('created');
+	  					}
+	  				});
+				}
+
+				res.write('<h1>File is uploaded</h1>');
+				res.end('<a href="/uploads/'+req.body.name+'">view img</a>');
+			});
 		});
 	}
 });

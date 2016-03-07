@@ -30,7 +30,9 @@
 					if(data==='done')
 					{
 						window.location.href="/home";
-					}
+					} else {
+                        window.location.href="/home";
+                    }
 				});
 			});
             $("#signUpButton").click(function(){
@@ -48,6 +50,8 @@
                     },function(data){
                     if(data==='done')
                     {
+                        window.location.href="/home";
+                    } else {
                         window.location.href="/home";
                     }
                 });
@@ -71,7 +75,7 @@
                     <a class="hiddenanchor" id="tologin"></a>
                     <div id="wrapper">
                         <div id="login" class="animate form">
-                            <form method="post">
+                            <div>
                                 <h1>Log in</h1>
                                 <p>
                                     <label for="username" class="uname" data-icon="u" > Username </label>
@@ -89,11 +93,11 @@
 									Not a member yet ?
 									<a href="#toregister" class="to_register">Join us</a>
 								</p>
-                            </form>
+                            </div>
                         </div>
 
                         <div id="register" class="animate form">
-                            <form method="post">
+                            <div>
                                 <h1> Sign up </h1>
                                 <p>
                                     <label for="namesignup" class="name" data-icon="u">Name</label>
@@ -122,7 +126,7 @@
 									Already a member ?
 									<a href="#tologin" class="to_register"> Go and log in </a>
 								</p>
-                            </form>
+                            </div>
 							<script>
 								var pass = document.getElementById("passwordsignup"), repass = document.getElementById("passwordsignup_confirm");
 
