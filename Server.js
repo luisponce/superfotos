@@ -10,7 +10,7 @@ var storage 	=  multer.diskStorage({
 		callback(null, './uploads');
 	},
 	filename: function (req, file, callback) {
-		callback(null, req.body.name);
+		callback(null, req.session.usr+"-"+Date.now());
 	}
 });
 var upload = multer({ storage : storage}).single('userPhoto');
@@ -80,29 +80,41 @@ app.post('/login', function(req,res){
    DBController.User
    	.findOne({'username': req.body.username}, function(err, user){
 			if(err) res.end(err);
-
-			encrypter
-			.comparePassword(req.body.password, user.password, function(err, isMatch){
-				if(err) res.end(err);
-				if(isMatch){
-					sess.usr = user.username;
-					res.end('done');
-				} else {
-					res.end('wrong password')
-				}
-			});
+			if(user==null){
+				res.end('wrong username');
+			} else {
+				encrypter
+				.comparePassword(req.body.password, user.password, function(err, isMatch){
+					if(err) res.end(err);
+					if(isMatch){
+						sess.usr = user.username;
+						res.end('done');
+					} else {
+						res.end('wrong password')
+					}
+				});
+			}
 		});
 });
 
-app.post('/api/photo',function(req,res){
-	upload(req,res,function(err) {
-		if(err) {
-			return res.end(""+err);
-		}
+app.post('/api/photo', upload, function(req,res, next){
+	sess=req.session;
+	if(sess.usr){
+		res.end('Access Denied');
+	} else {
+		upload(req,res, function(err) {
+			if(err) {
+				return res.end(err);
+			} else {
+				// req.file is the file
+  				// req.body will hold the text fields, if there were any
+  				
+			}
 
-		res.write('<h1>File is uploaded</h1>');
-		res.end('<a href="/uploads/'+req.body.name+'">view img</a>');
-	});
+			res.write('<h1>File is uploaded</h1>');
+			res.end('<a href="/uploads/'+req.body.name+'">view img</a>');
+		});
+	}
 });
 
 app.get('/uploads/:name', function(req, res){
