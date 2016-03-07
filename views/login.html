@@ -23,7 +23,7 @@
 				/*
 				* Perform some validation here.
 				*/
-				$.post("http://10.131.137.212:3005/login",{username:username,pass:pass},function(data){
+				$.post("http://localhost:3005/login",{username:username,pass:pass},function(data){
 					if(data==='done')
 					{
 						window.location.href="/home";
@@ -37,7 +37,7 @@
                 /*
                 * Perform some validation here.
                 */
-                $.post("http://10.131.137.212:3005/register",
+                $.post("http://localhost:3005/register",
                     {
                         name:name,
                         username:username,

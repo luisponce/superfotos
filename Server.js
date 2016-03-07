@@ -48,22 +48,24 @@ app.get('/home', function(req, res){
 app.post('/register', function(req,res){
 	sess = req.session;
 	if(sess.usr){
-		//TODO user already loged in
+		//TODO user already logged in
 	} 
+	
+	encrypter.cryptPassword(req.body.password, function(err, hash){
+		var user = {
+			name: req.body.name,
+			username: req.body.username,
+			password: hash
+		};
 
-	var usr = new DBController.User({
-		name: req.body.name,
-		username: req.body.username,
-		password: req.body.password
-	});
-
-	DBController.connect(function(req,res){
-		usr.save(function(err, usr){
+		var userInstance = new DBController.User(user);
+		userInstance.save(function(err, userInstance){
 			if(err) {
 				console.log(err);
 				res.end(err);
 			} else {
-				sess.usr = usr.name;
+				sess.usr = user.name;
+				res.end('done');
 			}
 		});
 	});
@@ -71,18 +73,25 @@ app.post('/register', function(req,res){
 
 app.post('/login', function(req,res){
 	sess=req.session;
-	
-	sess.usr = req.body.username;
+	if(sess.usr){
+		//TODO user already logged in
+	}
 
-    res.end('done');
+   DBController.User
+   	.findOne({'username': req.body.username}, function(err, user){
+			if(err) res.end(err);
 
-	//encrypter.cryptPassword(req.body.pass, function(err,hash){
-	// 	pass = hash;
-
-		
-	// 	res.end('done');
-	// })
-    ;
+			encrypter
+			.comparePassword(req.body.password, user.password, function(err, isMatch){
+				if(err) res.end(err);
+				if(isMatch){
+					sess.usr = user.username;
+					res.end('done');
+				} else {
+					res.end('wrong password')
+				}
+			});
+		});
 });
 
 app.post('/api/photo',function(req,res){

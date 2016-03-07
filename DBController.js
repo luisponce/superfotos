@@ -1,22 +1,27 @@
 var mongoose = require('mongoose');
-
-exports.connect = function(callback){
-    mongoose.connect('mongodb://localhost/superfotos');
-    var db = mongoose.connection;
-    db.on('error', console.error.bind(console, 'connection error:'));
-    db.once('open', callback);
-}
+var connection = mongoose.createConnection('localhost', 'superfotos');
+exports.connection = connection;
 
 //user schema
 var userSchema = new mongoose.Schema({
-	name: String,
-	username: String,
-	password: String
-
+	name: {
+		type: String,
+		required: true
+	},
+	username: {
+		type: String,
+		required: true,
+		unique: true,
+     	index: true
+	},
+	password: {
+		type: String,
+		required: true
+	}
 });
 
-exports.User = User;
-var User = mongoose.model('User', userSchema);
+var UserModel = connection.model('User', userSchema);
+exports.User = UserModel;
 
 // User.statics.findByUsername = function(usrname, cb){
 // 	return this.find({username: usrname}, cb);
