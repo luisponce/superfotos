@@ -148,8 +148,7 @@ app.post('/post', upload, function(req,res, next){
 	  						user.posts.push(postInstance);
 	  						user.save();
 
-	  						//TODO redirect to created post
-	  						res.end('post created');
+	  						res.redirect('/myposts');
 	  					}
 	  				});
 				}
