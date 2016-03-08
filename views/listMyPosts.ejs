@@ -7,6 +7,17 @@
   <body>
 
     <p> HOLA!!! </p>
-    <%= misposts %>
+    <table>
+    <% for(var i=0;i<misposts.length;i++)
+    { %>
+        <tr>
+        <td><%=misposts[i]["title"]%></td>
+      </tr>
+    <% }    %>
+  </table>
+      <div>
+        <label>  </label>
+      </div>
+    <%  %>
   </body>
 </html>

@@ -187,7 +187,7 @@ app.get('/myposts', function(req, res){
 			} else {
 				if(user.posts){
     				res.render('listMyPosts', {
-						misposts: JSON.stringify(user.posts)
+						misposts: user.posts
 					});
     			} else {
     				res.end();
