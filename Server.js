@@ -108,7 +108,7 @@ app.post('/post', upload, function(req,res, next){
 		res.end('Access Denied');
 	} else {
 		DBController.User
-		.findOne({'username': 'lp'}, function(err, user){//TODO: !!!!!! cambiar a usuario en session
+		.findOne({'username': sess.usr}, function(err, user){
 			if(err) {
 				//TODO error handling
 			}
@@ -121,7 +121,7 @@ app.post('/post', upload, function(req,res, next){
 	  				// req.body will hold the text fields, if there were any
 	  				var tagarr = new Array();
 	  				
-	  				tagarr = body.taglist.split(',');
+	  				// tagarr = body.taglist.split(',');
 
 	  				var post = {
 	  					owner: user._id,
@@ -136,15 +136,19 @@ app.post('/post', upload, function(req,res, next){
 
 	  				var postInstance = new DBController.Post(post);
 
-	  				crearTags(tagarr, postInstance, function(postInstance){
-	  					postInstance.save(function(err, postInstance){
-		  					if(err){
-		  						//TODO error handling
-		  					} else {
-		  						//TODO redirect to created post
-		  						res.end('created');
-		  					}
-		  				});
+	  				postInstance.save(function(err, postInstance){
+	  					if(err){
+	  						//TODO error handling
+	  					} else {
+	  						// crearTags(tagarr, postInstance, function(postInstance){
+			  				// 	res.end('created');
+			  				// });
+	  						user.posts.push(postInstance);
+	  						user.save();
+
+	  						//TODO redirect to created post
+	  						res.end('post created');
+	  					}
 	  				});
 				}
 			});
@@ -155,16 +159,37 @@ app.post('/post', upload, function(req,res, next){
 function crearTags(tagarr, postInstance, cb){
 	for (var i = tagarr.length - 1; i >= 0; i--) {
 		var tagInstance = new DBController.Tag({name: tagarr[i]});
-		// tagInstance.save(function(err, tag){
-		// 	if (err) {
-		// 		//TODO error handling
-		// 	}
-		// });
-		postInstance.tags.push(tagInstance);
+		tagInstance.save(function(err, tag){
+			if (err) {
+				//TODO error handling
+			}
+			postInstance.tags.push(tagInstance);
+			postInstance.save();
+		});
 	};
 
 	return cb(postInstance);
 }
+
+app.get('/myposts', function(req, res){
+	sess = req.session;
+	if(sess.usr == null){
+		res.end('Access Denied');
+	} else {
+		DBController.User
+		.findOne({'username': sess.usr})
+		.populate('posts')
+		.exec(function(err, user){
+			if(err){
+				console.log(err);
+			} else {
+				res.setHeader('Content-Type', 'application/json');
+    			res.send(JSON.stringify(user.posts), null, 3);
+			}
+			
+		});
+	}
+});
 
 app.get('/uploads/:name', function(req, res){
 	var filename = req.params.name;

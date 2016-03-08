@@ -18,7 +18,7 @@ var userSchema = new Schema({
 		type: String,
 		required: true
 	},
-	posts: [{type: Schema.Types.ObjectId, ref: 'Posts'}], 
+	posts: [{type: Schema.Types.ObjectId, ref: 'Post'}], 
 	subscriptions: [{type: Schema.Types.ObjectId, ref: 'Tag'}]
 });
 var UserModel = connection.model('User', userSchema);
