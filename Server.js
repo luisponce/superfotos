@@ -4,6 +4,7 @@ var bodyParser = 	require('body-parser');
 var session 	= 	require('express-session');
 var DBController = require('./DBController');
 var encrypter 	=  require('./helpers/passEncription');
+var fs = require('fs');
 var app 			= 	express();
 var storage 	=  multer.diskStorage({
 	destination: function (req, file, callback) {
@@ -40,8 +41,7 @@ app.get('/home', function(req, res){
 	if(sess.usr){
 		res.render('index.html');
 	} else {
-		res.write('<h1>Please login first.</h1>');
-		res.end('<a href="/">Login</a>');
+		res.redirect('/');
 	}
 });
 
@@ -112,7 +112,8 @@ app.post('/post', upload, function(req,res, next){
 		.findOne({'username': sess.usr}, function(err, user){
 			if(err) {
 				//TODO error handling
-			}
+				console.log(err);
+			} else
 
 			upload(req,res, function(err) {
 				if(err) {
@@ -130,7 +131,7 @@ app.post('/post', upload, function(req,res, next){
 	  					image: {
 	  						name: body.imagename,
 	  						filename: req.file.filename,
-	  						uri: user.username+"/"+req.file.originalname
+	  						uri: "/post/"+body.postname+"/photo"
 	  					},
 	  					description: body.description
 	  				}
@@ -184,13 +185,49 @@ app.get('/myposts', function(req, res){
 			if(err){
 				console.log(err);
 			} else {
-				res.render('listMyPosts', {
-					misposts: user.posts
-				});
+				if(user.posts){
+    				res.render('listMyPosts', {
+						misposts: user.posts
+					});
+    			} else {
+    				res.end();
+    			}
 			}
 
 		});
 	}
+});
+
+app.get('/post/:title', function(req,res){
+	var title = req.params.title;
+
+	//TODO: validate user logged in is owner of post
+	DBController.Post
+	.findOne({'title':title}, function(err,post){
+		if(err){
+			res.end(err);
+		} else {
+			res.end(JSON.stringify(post));
+		}
+	});
+});
+
+app.get('/post/:title/photo', function(req,res){
+	var title = req.params.title;
+
+	DBController.Post.findOne({'title':title}, function(err,post){
+		if(err){
+			res.end(err);
+		} else {
+			var filename = post.image.filename;
+
+			var img = fs.readFileSync('./uploads/'+filename);
+	     	res.writeHead(200, {'Content-Type': 'image/png' });
+	     	res.end(img, 'binary');
+
+			// res.sendFile(filename, {root: './uploads'});
+		}
+	});
 });
 
 app.get('/uploads/:name', function(req, res){
