@@ -15,6 +15,7 @@ var storage 	=  multer.diskStorage({
 });
 var upload = multer({ storage : storage}).single('userPhoto');
 
+app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname+'/resources'));
 app.engine('html', require('ejs').renderFile);
@@ -49,8 +50,8 @@ app.post('/register', function(req,res){
 	sess = req.session;
 	if(sess.usr){
 		//TODO user already logged in
-	} 
-	
+	}
+
 	encrypter.cryptPassword(req.body.password, function(err, hash){
 		if(err){
 			//TODO error handling
@@ -120,7 +121,7 @@ app.post('/post', upload, function(req,res, next){
 					// req.file is the file
 	  				// req.body will hold the text fields, if there were any
 	  				var tagarr = new Array();
-	  				
+
 	  				// tagarr = body.taglist.split(',');
 
 	  				var post = {
@@ -183,10 +184,11 @@ app.get('/myposts', function(req, res){
 			if(err){
 				console.log(err);
 			} else {
-				res.setHeader('Content-Type', 'application/json');
-    			res.send(JSON.stringify(user.posts), null, 3);
+				res.render('listMyPosts', {
+					misposts: JSON.stringify(user.posts)
+				});
 			}
-			
+
 		});
 	}
 });
@@ -209,4 +211,3 @@ app.get('/logout',function(req,res){
 app.listen(3005,function(){
 	console.log("Working on port 3005");
 });
-
