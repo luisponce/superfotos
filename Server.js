@@ -185,7 +185,7 @@ app.get('/myposts', function(req, res){
 				console.log(err);
 			} else {
 				res.render('listMyPosts', {
-					misposts: JSON.stringify(user.posts)
+					misposts: user.posts
 				});
 			}
 
