@@ -4,6 +4,7 @@ var bodyParser = 	require('body-parser');
 var session 	= 	require('express-session');
 var DBController = require('./DBController');
 var encrypter 	=  require('./helpers/passEncription');
+var fs = require('fs');
 var app 			= 	express();
 var storage 	=  multer.diskStorage({
 	destination: function (req, file, callback) {
@@ -15,6 +16,7 @@ var storage 	=  multer.diskStorage({
 });
 var upload = multer({ storage : storage}).single('userPhoto');
 
+app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname+'/resources'));
 app.engine('html', require('ejs').renderFile);
@@ -48,8 +50,8 @@ app.post('/register', function(req,res){
 	sess = req.session;
 	if(sess.usr){
 		//TODO user already logged in
-	} 
-	
+	}
+
 	encrypter.cryptPassword(req.body.password, function(err, hash){
 		if(err){
 			//TODO error handling
@@ -110,7 +112,8 @@ app.post('/post', upload, function(req,res, next){
 		.findOne({'username': sess.usr}, function(err, user){
 			if(err) {
 				//TODO error handling
-			}
+				console.log(err);
+			} else
 
 			upload(req,res, function(err) {
 				if(err) {
@@ -119,7 +122,7 @@ app.post('/post', upload, function(req,res, next){
 					// req.file is the file
 	  				// req.body will hold the text fields, if there were any
 	  				var tagarr = new Array();
-	  				
+
 	  				// tagarr = body.taglist.split(',');
 
 	  				var post = {
@@ -128,7 +131,7 @@ app.post('/post', upload, function(req,res, next){
 	  					image: {
 	  						name: body.imagename,
 	  						filename: req.file.filename,
-	  						uri: user.username+"/"+req.file.originalname
+	  						uri: "/post/"+body.postname+"/photo"
 	  					},
 	  					description: body.description
 	  				}
@@ -182,16 +185,49 @@ app.get('/myposts', function(req, res){
 			if(err){
 				console.log(err);
 			} else {
-				res.setHeader('Content-Type', 'application/json');
 				if(user.posts){
-    				res.send(JSON.stringify(user.posts), null, 3);
+    				res.render('listMyPosts', {
+						misposts: JSON.stringify(user.posts)
+					});
     			} else {
     				res.end();
     			}
 			}
-			
+
 		});
 	}
+});
+
+app.get('/post/:title', function(req,res){
+	var title = req.params.title;
+
+	//TODO: validate user logged in is owner of post
+	DBController.Post
+	.findOne({'title':title}, function(err,post){
+		if(err){
+			res.end(err);
+		} else {
+			res.end(JSON.stringify(post));
+		}
+	});
+});
+
+app.get('/post/:title/photo', function(req,res){
+	var title = req.params.title;
+
+	DBController.Post.findOne({'title':title}, function(err,post){
+		if(err){
+			res.end(err);
+		} else {
+			var filename = post.image.filename;
+
+			var img = fs.readFileSync('./uploads/'+filename);
+	     	res.writeHead(200, {'Content-Type': 'image/png' });
+	     	res.end(img, 'binary');
+
+			// res.sendFile(filename, {root: './uploads'});
+		}
+	});
 });
 
 app.get('/uploads/:name', function(req, res){
@@ -212,4 +248,3 @@ app.get('/logout',function(req,res){
 app.listen(3005,function(){
 	console.log("Working on port 3005");
 });
-

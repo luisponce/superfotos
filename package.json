@@ -8,6 +8,7 @@
     "express-session": "^1.7.6",
     "bcrypt":"",
     "mongoose":"",
+    "fs":"",
     "multer": "1.1.0"
   },
   "devDependencies": {
