@@ -39,8 +39,7 @@ app.get('/home', function(req, res){
 	if(sess.usr){
 		res.render('index.html');
 	} else {
-		res.write('<h1>Please login first.</h1>');
-		res.end('<a href="/">Login</a>');
+		res.redirect('/');
 	}
 });
 
@@ -184,7 +183,11 @@ app.get('/myposts', function(req, res){
 				console.log(err);
 			} else {
 				res.setHeader('Content-Type', 'application/json');
-    			res.send(JSON.stringify(user.posts), null, 3);
+				if(user.posts){
+    				res.send(JSON.stringify(user.posts), null, 3);
+    			} else {
+    				res.end();
+    			}
 			}
 			
 		});
