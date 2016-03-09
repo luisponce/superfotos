@@ -36,6 +36,15 @@ app.get('/',function(req,res){
 	}
 });
 
+app.get('/signup',function(req,res){
+	sess = req.session;
+	if(sess.usr){
+		res.redirect('/home');
+	} else {
+		res.render('signup.html');
+	}
+});
+
 app.get('/home', function(req, res){
 	sess = req.session;
 	if(sess.usr){
@@ -50,6 +59,8 @@ app.post('/register', function(req,res){
 	sess = req.session;
 	if(sess.usr){
 		//TODO user already logged in
+	} else {
+		res.redirect('/signup');
 	}
 
 	encrypter.cryptPassword(req.body.password, function(err, hash){

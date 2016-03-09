@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Sign Up</title>
+
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	
+	<style>
+
+		textarea:focus, input:focus{
+			outline: 0;
+		}
+
+		input:focus:invalid,
+		textarea:focus:invalid{
+			border:1px solid #F5192F;
+			box-shadow:0 0 4px #F5192F;
+		}
+
+		input:focus:valid,
+		textarea:focus:valid{
+			border: 1px solid #64C364;
+			box-shadow: 0 0 4px #64C364;
+		}
+		
+		</style>
+		
+		<script>
+		
+		function signup() {
+      name=$("#name").val();
+      username=$("#username").val();
+      pass=$("#password").val();
+      /*
+      * Perform some validation here.
+      */
+      $.post("http://localhost:3005/register",
+          {
+              'name':name,
+              'username':username,
+              'password':pass
+          },function(data){
+          if(data==='done')
+          {
+              window.location.href="/home";
+          } else {
+              window.location.href="/";
+          }
+      });
+    }
+	
+	</script>
+	
+</head>
+
+<body>
+
+	<form method="post">
+
+		<div class="form-title-row">
+			<h1>Sign Up</h1>
+		</div>
+
+		<div class="form-row">
+			<label>
+				<span>Name</span>
+				<input type="text" id="name" name="name" required>
+			</label>
+		</div>
+		
+		<div class="form-row">
+			<label>
+				<span>Username</span>
+				<input type="text" id="username" name="username" required>
+			</label>
+		</div>
+
+		<div class="form-row">
+			<label>
+				<span>Password</span>
+				<input type="password" id="password" name="password" required>
+			</label>
+		</div>
+		
+		<div class="form-row">
+			<label>
+				<span>Confirm password</span>
+				<input type="password" id="confirmPassword" name="confirmPassword" required>
+			</label>
+		</div>
+
+		<div class="form-button">
+			<button type="submit" onclick="signup()">Sign Up</button>
+		</div>
+		
+		<div class="form-advice">
+			<label>
+				<span>Already a member? <a href="/login">Go to login</a></span>
+			</label>
+		</div>
+		
+	</form>
+	<script>
+								var pass = document.getElementById("password"), repass = document.getElementById("confirmPassword");
+
+								function validatePassword(){
+									if(pass.value != repass.value) {
+										repass.setCustomValidity("Passwords Don't Match");
+									} else {
+										repass.setCustomValidity('');
+									}
+								}
+								password.onchange = validatePassword;
+								confirmPassword.onkeyup = validatePassword;
+								
+							</script>
+</body>
+
+</html>
