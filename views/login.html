@@ -15,52 +15,51 @@
 		<link rel="stylesheet" type="text/css" href="css/animate-custom.css" />
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<script>
-		$(document).ready(function(){
-			var username,pass;
-			$("#loginButton").click(function(){
-				username=$("#username").val();
-				pass=$("#password").val();
-				/*
-				* Perform some validation here.
-				*/
-				$.post("http://localhost:3005/login",{
-                    'username':username,
-                    'password':pass
-                },function(data){
-					if(data==='done')
-					{
-						window.location.href="/home";
-					} else {
-                        window.location.href="/home";
-                    }
-				});
-			});
-            $("#signUpButton").click(function(){
-                name=$("#namesignup").val();
-                username=$("#usernamesignup").val();
-                pass=$("#passwordsignup").val();
-                /*
-                * Perform some validation here.
-                */
-                $.post("http://localhost:3005/register",
-                    {
-                        'name':name,
-                        'username':username,
-                        'password':pass
-                    },function(data){
-                    if(data==='done')
-                    {
-                        window.location.href="/home";
-                    } else {
-                        window.location.href="/home";
-                    }
-                });
-            });
-		});
 
+    function login() {
+      var username, pass;
+      username=$("#username").val();
+      pass=$("#password").val();
+      /*
+      * Perform some validation here.
+      */
+      $.post("http://localhost:3005/login",{
+                  'username':username,
+                  'password':pass
+              },function(data){
+        if(data==='done')
+        {
+          window.location.href="/home";
+        } else {
+                      window.location.href="/home";
+                  }
+      });
+    }
+
+    function signup() {
+      name=$("#namesignup").val();
+      username=$("#usernamesignup").val();
+      pass=$("#passwordsignup").val();
+      /*
+      * Perform some validation here.
+      */
+      $.post("http://localhost:3005/register",
+          {
+              'name':name,
+              'username':username,
+              'password':pass
+          },function(data){
+          if(data==='done')
+          {
+              window.location.href="/home";
+          } else {
+              window.location.href="/home";
+          }
+      });
+    }
 		/*$(document).ready(function(){
 			var pass,repass;
-			
+
 		});*/
 	</script>
     </head>
@@ -77,6 +76,7 @@
                         <div id="login" class="animate form">
                             <div>
                                 <h1>Log in</h1>
+                                <form method="post">
                                 <p>
                                     <label for="username" class="uname" data-icon="u" > Username </label>
                                     <input id="username" name="username" required="required" type="text" placeholder="mysuperusername"/>
@@ -87,8 +87,9 @@
                                 </p>
 
                                 <p class="login button">
-                                    <input type="submit" value="Login" id="loginButton" />
+                                    <input type="button" value="Login" id="loginButton" onclick="login()"/>
 								</p>
+              </form>
                                 <p class="change_link">
 									Not a member yet ?
 									<a href="#toregister" class="to_register">Join us</a>
@@ -99,6 +100,7 @@
                         <div id="register" class="animate form">
                             <div>
                                 <h1> Sign up </h1>
+                                <form method="post">
                                 <p>
                                     <label for="namesignup" class="name" data-icon="u">Name</label>
                                     <input id="namesignup" name="namesignup" required="required" type="text" placeholder="mysupername" />
@@ -120,7 +122,7 @@
                                     <input id="passwordsignup_confirm" name="passwordsignup_confirm" required="required" type="password" placeholder="mysuperpassword"/>
                                 </p>
                                 <p class="signin button">
-									<input type="submit" value="Sign up" id="signUpButton"/>
+									<input type="button" value="Sign up" id="signUpButton" onclick="signup()"/>
 								</p>
                                 <p class="change_link">
 									Already a member ?
