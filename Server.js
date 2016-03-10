@@ -54,14 +54,13 @@ app.get('/home', function(req, res){
 	}
 });
 
-
 app.post('/register', function(req,res){
 	sess = req.session;
 	if(sess.usr){
 		//TODO user already logged in
-	} else {
-		res.redirect('/signup');
-	}
+	} //else {
+		//res.redirect('/signup');
+	//}
 
 	encrypter.cryptPassword(req.body.password, function(err, hash){
 		if(err){
@@ -80,6 +79,7 @@ app.post('/register', function(req,res){
 				res.end(err);
 			} else {
 				sess.usr = user.name;
+				res.redirect('/');
 				res.end('done');
 			}
 		});
@@ -103,6 +103,7 @@ app.post('/login', function(req,res){
 					if(err) res.end(err);
 					if(isMatch){
 						sess.usr = user.username;
+						res.redirect('/');
 						res.end('done');
 					} else {
 						res.end('wrong password')

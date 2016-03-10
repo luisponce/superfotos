@@ -10,7 +10,7 @@
 	<title>Login</title>
 
 	<link rel="stylesheet" type="text/css" href="styles.css">
-	
+
 	<style>
 
 		textarea:focus, input:focus{
@@ -28,37 +28,14 @@
 			border: 1px solid #64C364;
 			box-shadow: 0 0 4px #64C364;
 		}
-		
+
 		</style>
-		
-		<script>
-		
-		function login() {
-      var username, pass;
-      username=$("#username").val();
-      pass=$("#password").val();
-      /*
-      * Perform some validation here.
-      */
-      $.post("http://localhost:3005/login",{
-                  'username':username,
-                  'password':pass
-              },function(data){
-        if(data==='done')
-        {
-          window.location.href="/home";
-        } else {
-          window.location.href="/";
-        }
-      });
-    }
-	</script>
-	
+
 </head>
 
 <body>
 
-<form method="post">
+<form method="post" action="/login">
 
 		<div class="form-title-row">
 			<h1>Login</h1>
@@ -79,9 +56,9 @@
 		</div>
 
 		<div class="form-button">
-			<button onclick="login()">Log in</button>
+			<button type="submit">Log in</button>
 		</div>
-		
+
 		<div class="form-advice">
 			<label>
 				<span>Not a member yet? <a href="/signup">Join Us</a></span>
@@ -89,7 +66,7 @@
 		</div>
 
 	</form>
-	
+
 </body>
 
 </html>

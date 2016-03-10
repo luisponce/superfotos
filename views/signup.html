@@ -10,7 +10,7 @@
 	<title>Sign Up</title>
 
 	<link rel="stylesheet" type="text/css" href="styles.css">
-	
+
 	<style>
 
 		textarea:focus, input:focus{
@@ -28,40 +28,14 @@
 			border: 1px solid #64C364;
 			box-shadow: 0 0 4px #64C364;
 		}
-		
+
 		</style>
-		
-		<script>
-		
-		function signup() {
-      name=$("#name").val();
-      username=$("#username").val();
-      pass=$("#password").val();
-      /*
-      * Perform some validation here.
-      */
-      $.post("http://localhost:3005/register",
-          {
-              'name':name,
-              'username':username,
-              'password':pass
-          },function(data){
-          if(data==='done')
-          {
-              window.location.href="/home";
-          } else {
-              window.location.href="/";
-          }
-      });
-    }
-	
-	</script>
-	
+
 </head>
 
 <body>
 
-	<form method="post">
+	<form method="post" action="/register">
 
 		<div class="form-title-row">
 			<h1>Sign Up</h1>
@@ -73,7 +47,7 @@
 				<input type="text" id="name" name="name" required>
 			</label>
 		</div>
-		
+
 		<div class="form-row">
 			<label>
 				<span>Username</span>
@@ -87,7 +61,7 @@
 				<input type="password" id="password" name="password" required>
 			</label>
 		</div>
-		
+
 		<div class="form-row">
 			<label>
 				<span>Confirm password</span>
@@ -96,15 +70,15 @@
 		</div>
 
 		<div class="form-button">
-			<button type="submit" onclick="signup()">Sign Up</button>
+			<button type="submit">Sign Up</button>
 		</div>
-		
+
 		<div class="form-advice">
 			<label>
-				<span>Already a member? <a href="/login">Go to login</a></span>
+				<span>Already a member? <a href="/">Go to login</a></span>
 			</label>
 		</div>
-		
+
 	</form>
 	<script>
 								var pass = document.getElementById("password"), repass = document.getElementById("confirmPassword");
@@ -118,7 +92,7 @@
 								}
 								password.onchange = validatePassword;
 								confirmPassword.onkeyup = validatePassword;
-								
+
 							</script>
 </body>
 
