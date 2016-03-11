@@ -50,7 +50,7 @@ var postSchema = new Schema({
 		}
 	},
 	description: String,
-	tags: [{type: Schema.Types.ObjectId, ref: 'Tag'}]
+	tagList: [{type: Schema.Types.ObjectId, ref: 'Tag'}]
 });
 var PostModel = connection.model('Post', postSchema);
 exports.Post = PostModel;
