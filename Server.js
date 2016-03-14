@@ -4,17 +4,19 @@ var bodyParser = 	require('body-parser');
 var session 	= 	require('express-session');
 var DBController = require('./DBController');
 var encrypter 	=  require('./helpers/passEncription');
+var fs = require('fs');
 var app 			= 	express();
 var storage 	=  multer.diskStorage({
 	destination: function (req, file, callback) {
 		callback(null, './uploads');
 	},
 	filename: function (req, file, callback) {
-		callback(null, req.body.name);
+		callback(null, req.session.usr+"-"+Date.now());
 	}
 });
 var upload = multer({ storage : storage}).single('userPhoto');
 
+app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname+'/resources'));
 app.engine('html', require('ejs').renderFile);
@@ -34,36 +36,51 @@ app.get('/',function(req,res){
 	}
 });
 
+app.get('/signup',function(req,res){
+	sess = req.session;
+	if(sess.usr){
+		res.redirect('/home');
+	} else {
+		res.render('signup.html');
+	}
+});
+
 app.get('/home', function(req, res){
 	sess = req.session;
 	if(sess.usr){
 		res.render('index.html');
 	} else {
-		res.write('<h1>Please login first.</h1>');
-		res.end('<a href="/">Login</a>');
+		res.redirect('/');
 	}
 });
-
 
 app.post('/register', function(req,res){
 	sess = req.session;
 	if(sess.usr){
-		//TODO user already loged in
-	} 
+		//TODO user already logged in
+	} //else {
+		//res.redirect('/signup');
+	//}
 
-	var usr = new DBController.User({
-		name: req.body.name,
-		username: req.body.username,
-		password: req.body.password
-	});
+	encrypter.cryptPassword(req.body.password, function(err, hash){
+		if(err){
+			//TODO error handling
+		}
+		var user = {
+			name: req.body.name,
+			username: req.body.username,
+			password: hash
+		};
 
-	DBController.connect(function(req,res){
-		usr.save(function(err, usr){
+		var userInstance = new DBController.User(user);
+		userInstance.save(function(err, userInstance){
 			if(err) {
 				console.log(err);
 				res.end(err);
 			} else {
-				sess.usr = usr.name;
+				sess.usr = user.name;
+				res.redirect('/');
+				res.end('done');
 			}
 		});
 	});
@@ -71,28 +88,156 @@ app.post('/register', function(req,res){
 
 app.post('/login', function(req,res){
 	sess=req.session;
-	
-	sess.usr = req.body.username;
+	if(sess.usr){
+		//TODO user already logged in
+	}
 
-    res.end('done');
-
-	//encrypter.cryptPassword(req.body.pass, function(err,hash){
-	// 	pass = hash;
-
-		
-	// 	res.end('done');
-	// })
-    ;
+   DBController.User
+   	.findOne({'username': req.body.username}, function(err, user){
+			if(err) res.end(err);
+			if(user==null){
+				res.end('wrong username');
+			} else {
+				encrypter
+				.comparePassword(req.body.password, user.password, function(err, isMatch){
+					if(err) res.end(err);
+					if(isMatch){
+						sess.usr = user.username;
+						res.redirect('/');
+						res.end('done');
+					} else {
+						res.end('wrong password')
+					}
+				});
+			}
+		});
 });
 
-app.post('/api/photo',function(req,res){
-	upload(req,res,function(err) {
-		if(err) {
-			return res.end(""+err);
-		}
+app.post('/post', upload, function(req,res, next){
+	var body = req.body;
 
-		res.write('<h1>File is uploaded</h1>');
-		res.end('<a href="/uploads/'+req.body.name+'">view img</a>');
+	sess=req.session;
+	if(sess.usr == null){
+		res.end('Access Denied');
+	} else {
+		DBController.User
+		.findOne({'username': sess.usr}, function(err, user){
+			if(err) {
+				//TODO error handling
+				console.log(err);
+			} else
+
+			upload(req,res, function(err) {
+				if(err) {
+					return res.end(err);
+				} else {
+					// req.file is the file
+	  				// req.body will hold the text fields, if there were any
+	  				var tagarr = new Array();
+
+	  				// tagarr = body.taglist.split(',');
+
+	  				var post = {
+	  					owner: user._id,
+	  					title: body.postname,
+	  					image: {
+	  						name: body.imagename,
+	  						filename: req.file.filename,
+	  						uri: "/post/"+body.postname+"/photo"
+	  					},
+	  					description: body.description
+	  				}
+
+	  				var postInstance = new DBController.Post(post);
+
+	  				postInstance.save(function(err, postInstance){
+	  					if(err){
+	  						//TODO error handling
+	  					} else {
+	  						// crearTags(tagarr, postInstance, function(postInstance){
+			  				// 	res.end('created');
+			  				// });
+	  						user.posts.push(postInstance);
+	  						user.save();
+
+	  						res.redirect('/myposts');
+	  					}
+	  				});
+				}
+			});
+		});
+	}
+});
+
+function crearTags(tagarr, postInstance, cb){
+	for (var i = tagarr.length - 1; i >= 0; i--) {
+		var tagInstance = new DBController.Tag({name: tagarr[i]});
+		tagInstance.save(function(err, tag){
+			if (err) {
+				//TODO error handling
+			}
+			postInstance.tags.push(tagInstance);
+			postInstance.save();
+		});
+	};
+
+	return cb(postInstance);
+}
+
+app.get('/myposts', function(req, res){
+	sess = req.session;
+	if(sess.usr == null){
+		res.end('Access Denied');
+	} else {
+		DBController.User
+		.findOne({'username': sess.usr})
+		.populate('posts')
+		.exec(function(err, user){
+			if(err){
+				console.log(err);
+			} else {
+				if(user.posts){
+    				res.render('listMyPosts', {
+						misposts: user.posts
+					});
+    			} else {
+    				res.end();
+    			}
+			}
+
+		});
+	}
+});
+
+app.get('/post/:title', function(req,res){
+	var title = req.params.title;
+
+	//TODO: validate user logged in is owner of post
+	DBController.Post
+	.findOne({'title':title}, function(err,post){
+		if(err){
+			res.end(err);
+		} else {
+			res.end(JSON.stringify(post));
+		}
+	});
+});
+
+app.get('/post/:title/photo', function(req,res){
+	var title = req.params.title;
+
+	DBController.Post.findOne({'title':title}, function(err,post){
+		if(err){
+			res.end(err);
+		} else {
+			var filename = post.image.filename;
+
+			var img = fs.readFileSync('./uploads/'+filename);
+	     	res.writeHead(200, {'Content-Type': 'image/png' });
+	     	res.end(img, 'binary');
+
+			// res.sendFile(filename, {root: './uploads'});
+		}
 	});
 });
 
@@ -114,4 +259,3 @@ app.get('/logout',function(req,res){
 app.listen(3005,function(){
 	console.log("Working on port 3005");
 });
-

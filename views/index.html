@@ -10,7 +10,6 @@
 	<title>SuperFotos.co</title>
 
 	<link rel="stylesheet" type="text/css" href="styles.css">
-	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
 	<style>
 
@@ -30,51 +29,57 @@
 			box-shadow: 0 0 4px #64C364;
 		}
 
+		fieldset { border: #6caee0 2px solid; }
+
+		legend {
+		  padding: 0.2em 0.5em;
+		  font-weight: bold;
+		}
+
 	</style>
 
 </head>
 
 
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">SuperFotos</a>
-    </div>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li ><a href="#">Mi cuenta</a></li>
-        <li><a href="#">Mis fotos</a></li>
-				<li><a href="#">Mis tags</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Log Out</a></li>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
+<nav>
 
+		<a href="/">SuperFotos.co</a>•
+		<a class="active" href="/">Mi cuenta</a>•
+		<a href="/myposts">Mis posts</a>•
+		<a href="logout">Log Out</a>
 
 <body>
 
-	<form id="uploadForm" enctype="multipart/form-data" action="/api/photo" method="post">
+	<form id="uploadForm" enctype="multipart/form-data" action="/post" method="post">
 
 		<div class="form-title-row">
-			<h1>Upload a new photo</h1>
+			<h1>New post</h1>
 		</div>
 
 		<div class="form-row">
 			<label>
 				<span>Name</span>
-				<input type="text" name="name" required maxlength="24">
+				<input type="text" name="postname" required maxlength="24">
+			</label>
+		</div>
+
+		<div class="form-row">
+			<label>
+				<span>Description</span>
+				<textarea name="description" required maxlength="50"></textarea>
+			</label>
+		</div>
+
+		<br>
+
+		<fieldset>
+		<legend>Image</legend>
+
+		<div class="form-row">
+			<label>
+				<span>Name</span>
+				<input type="text" name="imagename" required maxlength="24">
 			</label>
 		</div>
 
@@ -85,8 +90,12 @@
 			</label>
 		</div>
 
+		<br>
+
+		</fieldset>
+
 		<div class="form-row">
-			<button type="submit" name="submit">Upload image</button>
+			<button type="submit" name="submit">Post</button>
 		</div>
 
 	</form>

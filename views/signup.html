@@ -7,7 +7,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>Login</title>
+	<title>Sign Up</title>
 
 	<link rel="stylesheet" type="text/css" href="styles.css">
 
@@ -35,10 +35,17 @@
 
 <body>
 
-<form method="post" action="/login">
+	<form method="post" action="/register">
 
 		<div class="form-title-row">
-			<h1>Login</h1>
+			<h1>Sign Up</h1>
+		</div>
+
+		<div class="form-row">
+			<label>
+				<span>Name</span>
+				<input type="text" id="name" name="name" required>
+			</label>
 		</div>
 
 		<div class="form-row">
@@ -55,18 +62,38 @@
 			</label>
 		</div>
 
+		<div class="form-row">
+			<label>
+				<span>Confirm password</span>
+				<input type="password" id="confirmPassword" name="confirmPassword" required>
+			</label>
+		</div>
+
 		<div class="form-button">
-			<button type="submit">Log in</button>
+			<button type="submit">Sign Up</button>
 		</div>
 
 		<div class="form-advice">
 			<label>
-				<span>Not a member yet? <a href="/signup">Join Us</a></span>
+				<span>Already a member? <a href="/">Go to login</a></span>
 			</label>
 		</div>
 
 	</form>
+	<script>
+								var pass = document.getElementById("password"), repass = document.getElementById("confirmPassword");
 
+								function validatePassword(){
+									if(pass.value != repass.value) {
+										repass.setCustomValidity("Passwords Don't Match");
+									} else {
+										repass.setCustomValidity('');
+									}
+								}
+								password.onchange = validatePassword;
+								confirmPassword.onkeyup = validatePassword;
+
+							</script>
 </body>
 
 </html>

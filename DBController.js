@@ -1,23 +1,69 @@
-var mongoose = require('mongoose');
-
-exports.connect = function(callback){
-    mongoose.connect('mongodb://localhost/superfotos');
-    var db = mongoose.connection;
-    db.on('error', console.error.bind(console, 'connection error:'));
-    db.once('open', callback);
-}
+var mongoose = require('mongoose'), Schema = mongoose.Schema;
+var connection = mongoose.createConnection('localhost', 'superfotos');
+exports.connection = connection;
 
 //user schema
-var userSchema = new mongoose.Schema({
-	name: String,
-	username: String,
-	password: String
-
+var userSchema = new Schema({
+	name: {
+		type: String,
+		required: true
+	},
+	username: {
+		type: String,
+		required: true,
+		unique: true,
+     	index: true
+	},
+	password: {
+		type: String,
+		required: true
+	},
+	posts: [{type: Schema.Types.ObjectId, ref: 'Post'}], 
+	subscriptions: [{type: Schema.Types.ObjectId, ref: 'Tag'}]
 });
+var UserModel = connection.model('User', userSchema);
+exports.User = UserModel;
 
-exports.User = User;
-var User = mongoose.model('User', userSchema);
+//Post schema
+var postSchema = new Schema({
+	owner: {
+		type: Schema.Types.ObjectId, 
+		required: true,
+		ref: 'User'
+	},
+	title: {
+		type: String,
+		required: true
+	},
+	image: {
+		name: {
+			type: String,
+			required: true
+		},
+		filename: {
+			type: String,
+			required: true
+		},
+		uri: {
+			type: String,
+			required: true
+		}
+	},
+	description: String,
+	tags: [{type: Schema.Types.ObjectId, ref: 'Tag'}]
+});
+var PostModel = connection.model('Post', postSchema);
+exports.Post = PostModel;
 
-// User.statics.findByUsername = function(usrname, cb){
-// 	return this.find({username: usrname}, cb);
-// }
+//tag schema
+var tagSchema = new Schema({
+	name: {
+		type: String,
+		required: true
+	}
+});
+var TagModel = connection.model('Tag', tagSchema);
+exports.Tag = TagModel;
+
+
+

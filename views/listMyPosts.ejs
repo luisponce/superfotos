@@ -1,0 +1,49 @@
+<!DOCTYOPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  	<title>SuperFotos.co</title>
+
+  	<link rel="stylesheet" type="text/css" href="styles.css">
+
+  </head>
+
+  <nav>
+  		<a href="/home">SuperFotos.co</a>•
+  		<a href="/home">Mi cuenta</a>•
+  		<a class="active" href="/myposts">Mis posts</a>•
+  		<a href="logout">Log Out</a>
+  </nav>
+
+  <body>
+    <form>
+      <% for(var i=0;i<misposts.length;i++)
+      { %>
+
+  		<div class="form-title-row">
+  			<h1><%=misposts[i]["title"]%></h1>
+  		</div>
+
+  		<div class="form-row">
+  			<label>
+  				<span>Description: <%=misposts[i]["description"]%></span>
+  			</label>
+  		</div>
+
+      <div class="form-row">
+				<a href=<%=misposts[i]["image"]["uri"]%>>
+  				<img height="400" width="400" src=<%=misposts[i]["image"]["uri"]%>>
+				</a>
+  		</div>
+      <% }    %>
+
+  	</form>
+      <div>
+        <label>  </label>
+      </div>
+    <%  %>
+  </body>
+</html>
