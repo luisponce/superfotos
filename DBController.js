@@ -1,24 +1,22 @@
 var mongoose = require('mongoose');
-exports.mongoose;
-exports.connect = function(){
+
+exports.connect = function(callback){
     mongoose.connect('mongodb://localhost/superfotos');
     var db = mongoose.connection;
     db.on('error', console.error.bind(console, 'connection error:'));
-    db.once('open', function(){
-	console.log('db connected');
-    });
+    db.once('open', callback);
 }
 
 //user schema
-var userSchema = mongoose.Schema({
+var userSchema = new mongoose.Schema({
 	name: String,
 	username: String,
 	password: String
+
 });
 
-
-var User = mongoose.model('User', userSchema);
 exports.User = User;
+var User = mongoose.model('User', userSchema);
 
 // User.statics.findByUsername = function(usrname, cb){
 // 	return this.find({username: usrname}, cb);
