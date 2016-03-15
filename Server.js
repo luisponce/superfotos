@@ -115,77 +115,78 @@ app.post('/login', function (req, res) {
 });
 
 
-app.post('/post', upload, function(req,res, next){
-	var body = req.body;
+app.post('/post', upload, function (req, res, next) {
+    var body = req.body;
 
-	sess=req.session;
-	if(sess.usr == null){
-		res.end('Access Denied');
-	} else {
-		DBController.User
-		.findOne({'username': sess.usr}, function(err, user){
-			if(err) {
-				//TODO error handling
-				console.log(err);
-			} else
+    sess = req.session;
+    if (sess.usr == null) {
+        res.end('Access Denied');
+    } else {
+        DBController.User
+            .findOne({'username': sess.usr}, function (err, user) {
+                if (err) {
+                    //TODO error handling
+                    console.log(err);
+                } else
+                    upload(req, res, function (err) {
+                        if (err) {
+                            return res.end(err);
+                        } else {
+                            // req.file is the file
+                            // req.body will hold the text fields, if there were any
+                            var tagarr = new Array();
 
-			upload(req,res, function(err) {
-				if(err) {
-					return res.end(err);
-				} else {
-					// req.file is the file
-	  				// req.body will hold the text fields, if there were any
-	  				var tagarr = new Array();
+                            // tagarr = body.taglist.split(',');
 
-	  				// tagarr = body.taglist.split(',');
+                            var urlFriendlyPostName = body.postname.split(' ')
+                                .join('%20');
 
-	  				var urlFriendlyPostName = body.postname.replace(' ', '%20');
+                            var post = {
+                                owner: user._id,
+                                title: body.postname,
+                                image: {
+                                    name: body.imagename,
+                                    filename: req.file.filename,
+                                    uri: "/post/" + urlFriendlyPostName + "/photo"
+                                },
+                                description: body.description
+                            }
 
-                var post = {
-                    owner: user._id,
-                    title: body.postname,
-                    image: {
-                        name: body.imagename,
-                        filename: req.file.filename,
-                        uri: "/post/" + urlFriendlyPostName + "/photo"
-                    },
-                    description: body.description
-                }
+                            var postInstance = new DBController.Post(post);
 
-	  				var postInstance = new DBController.Post(post);
+                            postInstance.save(function (err, postInstance) {
+                                if (err) {
+                                    //TODO error handling
+                                } else {
+                                    // crearTags(tagarr, postInstance, function(postInstance){
+                                    // 	res.end('created');
+                                    // });
+                                    user.posts.push(postInstance);
+                                    user.save();
 
-	  				postInstance.save(function(err, postInstance){
-	  					if(err){
-	  						//TODO error handling
-	  					} else {
-	  						// crearTags(tagarr, postInstance, function(postInstance){
-			  				// 	res.end('created');
-			  				// });
-	  						user.posts.push(postInstance);
-	  						user.save();
-
-	  						res.redirect('/myposts');
-	  					}
-	  				});
-				}
-			});
-		});
-	}
+                                    res.redirect('/myposts');
+                                }
+                            });
+                        }
+                    });
+            });
+    }
 });
 
-function crearTags(tagarr, postInstance, cb){
-	for (var i = tagarr.length - 1; i >= 0; i--) {
-		var tagInstance = new DBController.Tag({name: tagarr[i]});
-		tagInstance.save(function(err, tag){
-			if (err) {
-				//TODO error handling
-			}
-			postInstance.tags.push(tagInstance);
-			postInstance.save();
-		});
-	};
+function crearTags(tagarr, postInstance, cb) {
+    for (var i = tagarr.length - 1; i >= 0; i--) {
+        var tagInstance = new DBController.Tag({name: tagarr[i]});
+        tagInstance.save(function (err, tag) {
+            if (err) {
+                //TODO error handling
+            }
+            postInstance.tags.push(tagInstance);
+            postInstance.save();
+        });
+    }
+    ;
 
-	return cb(postInstance);
+    return cb(postInstance);
 }
 
 app.get('/myposts', function (req, res) {
