@@ -136,6 +136,9 @@ app.post('/post', upload, function(req,res, next){
 				} else {
 					// req.file is the file
 	  				// req.body will hold the text fields, if there were any
+	  				var tagarr = new Array();
+
+	  				// tagarr = body.taglist.split(',');
 
 	  				var urlFriendlyPostName = body.postname.replace(' ', '%20');
 
@@ -152,60 +155,38 @@ app.post('/post', upload, function(req,res, next){
 
 	  				var postInstance = new DBController.Post(post);
 
-	  				if(body.taglist){//si hay tags
-						var tagarr = body.taglist.split(',');
-						agregarTags(tagarr, postInstance, null);
-	  				}
-
 	  				postInstance.save(function(err, postInstance){
 	  					if(err){
 	  						//TODO error handling
 	  					} else {
-	  						
+	  						// crearTags(tagarr, postInstance, function(postInstance){
+			  				// 	res.end('created');
+			  				// });
 	  						user.posts.push(postInstance);
 	  						user.save();
 
 	  						res.redirect('/myposts');
 	  					}
 	  				});
-	  				
 				}
 			});
 		});
 	}
 });
 
-function agregarTags(tagarr, postInstance, cb){
+function crearTags(tagarr, postInstance, cb){
 	for (var i = tagarr.length - 1; i >= 0; i--) {
-		(function(i) { 
-			addTag(tagarr[i], postInstance._id, null);
-		})(i);
+		var tagInstance = new DBController.Tag({name: tagarr[i]});
+		tagInstance.save(function(err, tag){
+			if (err) {
+				//TODO error handling
+			}
+			postInstance.tags.push(tagInstance);
+			postInstance.save();
+		});
 	};
 
-	return cb();
-}
-
-function addTag(tag, postId, cb){
-	var tagInstance;
-	//TODO: check if tag exists
-	DBController.Tag.findOne({'name': tag}, function(err, tagInstance){
-		if(err){
-			console.log(err);
-		}
-
-		if(tagInstance == null){
-			tagInstance = new DBController.Tag({'name': tag});
-			tagInstance.save();
-		}
-		
-		//add tag to post
-		DBController.Post.findOne({'_id': postId}, function(err, postInstance){
-			postInstance.tagList.push(tagInstance);
-			postInstance.save();
-
-			return cb();
-		});
-	});
+	return cb(postInstance);
 }
 
 app.get('/myposts', function (req, res) {
