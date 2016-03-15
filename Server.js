@@ -45,7 +45,7 @@ app.get('/signup', function (req, res) {
     }
 });
 
-app.get('/home', function (req, res) {
+app.get('/publish', function (req, res) {
     sess = req.session;
     if (sess.usr) {
         res.render('index.html');
@@ -212,6 +212,19 @@ app.get('/myposts', function (req, res) {
 
             });
     }
+});
+
+app.get('/home', function(req,res){
+	sess = req.session;
+	if (sess.usr === null) {
+		res.redirect('/');
+	} else {
+		DBController.Post.find().limit(20).exec(function(err, posts){
+			res.render('postList', {
+             misposts: posts
+         });
+		});
+	}
 });
 
 app.get('/post/:title', function (req, res) {
