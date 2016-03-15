@@ -78,7 +78,6 @@ app.post('/register', function (req, res) {
                 console.log(err);
                 res.end(err);
             } else {
-                sess.usr = user.name;
                 res.redirect('/');
                 res.end('done');
             }
