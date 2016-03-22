@@ -274,6 +274,15 @@ app.get('/logout', function (req, res) {
     });
 });
 
+var serverName;
+
 app.listen(3005, function () {
-    console.log("Working on port 3005");
+    var argv = require('minimist')(process.argv.slice(2));
+    if (argv.s){
+        serverName = argv.s;
+    } else {
+        serverName = 'default';
+    }
+    
+    console.log("Server '"+serverName+"' working on port 3005");
 });

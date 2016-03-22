@@ -9,7 +9,8 @@
     "bcryptjs":"",
     "mongoose":"",
     "fs":"",
-    "multer": "1.1.0"
+    "multer": "1.1.0",
+    "minimist": ""
   },
   "devDependencies": {
     "should": "~7.1.0",
