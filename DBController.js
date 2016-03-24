@@ -47,7 +47,8 @@ var postSchema = new Schema({
         uri: {
             type: String,
             required: true
-        }
+        },
+        locations: [{type: Schema.Types.ObjectId, ref: 'Server'}]
     },
     description: String,
     tags: [{type: Schema.Types.ObjectId, ref: 'Tag'}]
@@ -68,6 +69,12 @@ exports.Tag = TagModel;
 //Server schema
 var serverSchema = new Schema({
     name:{
+        type: String,
+        required: true,
+        unique: true,
+        index: true
+    },
+    folder:{
         type: String,
         required: true,
         unique: true,

@@ -115,8 +115,19 @@ app.post('/login', function (req, res) {
         });
 });
 
+//function setUploadEngine(){
+//    storage = multer.diskStorage({
+//        destination: function (req, file, callback) {
+//            callback(null, dir);
+//        },
+//        filename: function (req, file, callback) {
+//            callback(null, req.session.usr + "-" + Date.now());
+//        }
+//    });
+//    upload = multer({storage: storage}).single('userPhoto');
+//}
 
-app.post('/post', upload, function (req, res, next) {
+app.post('/post', upload,  function (req, res, next) {
     var body = req.body;
 
     sess = req.session;
@@ -129,6 +140,7 @@ app.post('/post', upload, function (req, res, next) {
                     //TODO error handling
                     console.log(err);
                 } else
+//                    setUploadEngine();
                     upload(req, res, function (err) {
                         if (err) {
                             return res.end(err);
@@ -151,9 +163,11 @@ app.post('/post', upload, function (req, res, next) {
                                     uri: "/post/" + urlFriendlyPostName + "/photo"
                                 },
                                 description: body.description
-                            }
+                            };
 
                             var postInstance = new DBController.Post(post);
+
+                            postInstance.image.locations.push(server);
 
                             postInstance.save(function (err, postInstance) {
                                 if (err) {
@@ -245,16 +259,18 @@ app.get('/post/:title', function (req, res) {
 app.get('/post/:title/photo', function (req, res) {
     var title = req.params.title;
 
-    DBController.Post.findOne({'title': title}, function (err, post) {
+    DBController.Post.findOne({'title': title})
+    .exec(function (err, post) {
         if (err) {
             res.end(err);
         } else {
             var filename = post.image.filename;
-
-            var img = fs.readFileSync(dir+'/' + filename);
-            res.writeHead(200, {'Content-Type': 'image/png'});
-            res.end(img, 'binary');
-
+            
+            DBController.Server.findOne({_id:post.image.locations[0]}, function(err, serv){
+                var img = fs.readFileSync(serv.folder + filename);
+                res.writeHead(200, {'Content-Type': 'image/png'});
+                res.end(img, 'binary');
+            });
             // res.sendFile(filename, {root: './uploads'});
         }
     });
@@ -277,6 +293,7 @@ app.get('/logout', function (req, res) {
 
 var serverName;
 var dir;
+var server;
 
 app.listen(3005, function () {
     var argv = require('minimist')(process.argv.slice(2));
@@ -286,11 +303,36 @@ app.listen(3005, function () {
         serverName = 'default';
     }
     
-    dir = './'+serverName+'/uploads';
+    DBController.Server.findOne({name: serverName}, function(err, serv){
+        if(err) console.error(err);
+        else {
+            if(!serv){
+                //create server in DB
+                server = {
+                    name: serverName,
+                    folder: './'+serverName+'/uploads/'
+                };
+                DBController.Server(server).save(function(err, newServ){
+                    if(err) console.error(err);
+                    else {
+                        server  = newServ;
+                        serverRegistered();
+                    }
+                });
+            } else {
+                server = serv;
+                serverRegistered();
+            }
+        }
+    });
+});
+
+function serverRegistered(){
+    dir = server.folder;
     mkdirp(dir, function (err) {
         if (err) console.error(err);
         else console.log('working on directory '+dir);
     });
     
     console.log("Server '"+serverName+"' working on port 3005");
-});
+}
