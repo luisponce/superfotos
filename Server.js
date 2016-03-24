@@ -6,9 +6,10 @@ var DBController = require('./DBController');
 var encrypter = require('./helpers/passEncription');
 var fs = require('fs');
 var app = express();
+var mkdirp = require('mkdirp');
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
-        callback(null, './uploads');
+        callback(null, dir);
     },
     filename: function (req, file, callback) {
         callback(null, req.session.usr + "-" + Date.now());
@@ -119,7 +120,7 @@ app.post('/post', upload, function (req, res, next) {
     var body = req.body;
 
     sess = req.session;
-    if (sess.usr == null) {
+    if (sess.usr === null) {
         res.end('Access Denied');
     } else {
         DBController.User
@@ -250,7 +251,7 @@ app.get('/post/:title/photo', function (req, res) {
         } else {
             var filename = post.image.filename;
 
-            var img = fs.readFileSync('./uploads/' + filename);
+            var img = fs.readFileSync(dir+'/' + filename);
             res.writeHead(200, {'Content-Type': 'image/png'});
             res.end(img, 'binary');
 
@@ -261,7 +262,7 @@ app.get('/post/:title/photo', function (req, res) {
 
 app.get('/uploads/:name', function (req, res) {
     var filename = req.params.name;
-    res.sendFile(filename, {root: './uploads'});
+    res.sendFile(filename, {root: dir});
 });
 
 app.get('/logout', function (req, res) {
@@ -275,6 +276,7 @@ app.get('/logout', function (req, res) {
 });
 
 var serverName;
+var dir;
 
 app.listen(3005, function () {
     var argv = require('minimist')(process.argv.slice(2));
@@ -283,6 +285,12 @@ app.listen(3005, function () {
     } else {
         serverName = 'default';
     }
+    
+    dir = './'+serverName+'/uploads';
+    mkdirp(dir, function (err) {
+        if (err) console.error(err);
+        else console.log('working on directory '+dir);
+    });
     
     console.log("Server '"+serverName+"' working on port 3005");
 });
