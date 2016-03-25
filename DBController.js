@@ -1,5 +1,5 @@
 var mongoose = require('mongoose'), Schema = mongoose.Schema;
-var connection = mongoose.createConnection('localhost', 'superfotos');
+var connection = mongoose.createConnection('mongodb://10.131.137.212/superfotos');
 exports.connection = connection;
 
 //user schema
