@@ -265,12 +265,27 @@ app.get('/post/:title/photo', function (req, res) {
             res.end(err);
         } else {
             var filename = post.image.filename;
-            
+	    for (var s in post.image.locations){
+		DBController.Server.findOne({_id:post.image.locations[s]}, function(err, serv){
+			if(serv.available){
+				try{
+					console.log(serv._id);
+					var img = fs.readFileSync(serv.folder + filename);
+					res.writeHead(200, {'Content-type': 'image/png'});
+					res.end(img, 'binary');
+				}catch(err){
+					console.log(err.message)
+				}
+			}
+		});
+	    }
+	/*
             DBController.Server.findOne({_id:post.image.locations[0]}, function(err, serv){
                 var img = fs.readFileSync(serv.folder + filename);
                 res.writeHead(200, {'Content-Type': 'image/png'});
                 res.end(img, 'binary');
             });
+	*/
             // res.sendFile(filename, {root: './uploads'});
         }
     });

@@ -1,14 +1,14 @@
 import subprocess
 import pymongo
 # Este archivo debe correrse desde la raiz del proyecto: /superfotos
-user = raw_input('Hacia que usuario? ')
-machine = raw_input('Hacia que maquina? ')
+user = raw_input('Desde que usuario? ')
+machine = raw_input('Desde que maquina? ')
 server = raw_input('Que server es este? ')
-serverDest = raw_input('Hacia que server? ')
-rsync = "rsync -a " + server + "/uploads/ "  + user + "@" + machine + ":~/superfotos/" + serverDest + "/uploads"
+serverDest = raw_input('Desde que server? ')
+rsync = "rsync -a " + user + "@" + machine + ":~/superfotos/" + serverDest + "/uploads/ " + server + "/uploads"
 print rsync
 pro2 = subprocess.Popen(rsync.split(), stdout=subprocess.PIPE)
-cm = "ls " + server + "/uploads" 
+cm = "ssh " + user + "@" + machine + " ls " + "~/superfotos/" + serverDest + "/uploads/"
 pro = subprocess.Popen(cm.split(), stdout=subprocess.PIPE)
 output = pro.communicate()[0]
 res = output.split()
